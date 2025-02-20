@@ -7,6 +7,11 @@ local columns = 15
 local rows = 7
 local nodes_per_page = columns * rows  -- 105 nodes per page
 
+minetest.register_privilege("ci", {
+    description = "Allows the player to use the ci command",
+    give_to_singleplayer = false
+})
+
 local function has_permission(player_name)
     return minetest.check_player_privs(player_name, {server=true})
 end

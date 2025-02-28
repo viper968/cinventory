@@ -13,14 +13,15 @@ minetest.register_privilege("ci", {
 })
 
 local function has_permission(player_name)
-    return minetest.check_player_privs(player_name, {server=true})
+    return minetest.check_player_privs(player_name, {ci=true})
 end
 
 -- Build the list of nodes after all mods are loaded.
 minetest.register_on_mods_loaded(function()
-    ci.blocks = {}
+    local list_items = minetest.settings:get_bool("ci_list_items")
+    local list_tools = minetest.settings:get_bool("ci_list_tools")
     for name, def in pairs(minetest.registered_items) do
-        if def.type == "node" then
+        if def.type == "node" or (list_items and def.type == "craftitem") or (list_tools and def.type == "tool") then
             table.insert(ci.blocks, name)
         end
     end
@@ -71,7 +72,7 @@ end
 
 minetest.register_chatcommand("ci", {
     description = "Open block list GUI with pages",
-    privs = {server=true},
+    privs = {ci=true},
     func = function(name, param)
         if not has_permission(name) then
             return false, "You do not have permission to use this command."
